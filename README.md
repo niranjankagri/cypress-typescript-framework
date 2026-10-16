@@ -175,6 +175,8 @@ Component tests (17):
 
 More: [docs/framework-design.md](docs/framework-design.md).
 
+
+
 ## Known limitations
 
 - The app keeps its data in memory; a restart (or `/api/test/reset`) brings back the seed data.

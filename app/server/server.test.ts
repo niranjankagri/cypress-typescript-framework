@@ -79,10 +79,10 @@ describe('API', () => {
   it('resets the data through the test hook', async () => {
     const headers = { Authorization: `Bearer ${await login()}` };
     await fetch(`${base}/api/tasks/seed-1`, { method: 'DELETE', headers });
+    assert.equal((await fetch(`${base}/api/tasks/seed-1`, { headers })).status, 404);
     assert.equal((await fetch(`${base}/api/test/reset`, { method: 'POST' })).status, 204);
-    // Reset also logs everybody out, so log in again.
-    const fresh = { Authorization: `Bearer ${await login()}` };
-    assert.equal((await fetch(`${base}/api/tasks/seed-1`, { headers: fresh })).status, 200);
+    // The task is back, and the login from before the reset still works.
+    assert.equal((await fetch(`${base}/api/tasks/seed-1`, { headers })).status, 200);
   });
 
   it('serves index.html for app routes, or explains how to build it', async () => {

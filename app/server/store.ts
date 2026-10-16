@@ -121,10 +121,11 @@ export function createStore() {
   let tasks: Task[] = [];
   const tokens = new Map<string, string>(); // token -> user id
 
+  // Logins survive a reset: user ids never change, so a token stays valid. That lets tests reset the
+  // data before every test and still reuse one login per user (cy.session).
   function reset(): void {
     users = seedUsers.map((user) => ({ ...user }));
     tasks = seedTasks.map((task) => ({ ...task }));
-    tokens.clear();
   }
 
   function ownTask(userId: string, taskId: string): Task | undefined {

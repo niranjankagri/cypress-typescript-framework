@@ -1,0 +1,120 @@
+# Continuous integration: static checks and the app's own tests first, then the Cypress API tests,
+# the UI tests in three browsers and the component tests, in parallel jobs.
+#
+# Runs on every push and pull request to main, by hand (Actions tab -> Run workflow) and every
+# night. The app under test is in this repository, so nothing outside can break a run.
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+  schedule:
+    - cron: '0 5 * * *' # 05:00 UTC every day
+
+# A newer push to the same branch cancels the run that is still going.
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  checks:
+    name: Lint, typecheck, app tests
+    runs-on: ubuntu-latest
+    env:
+      # The checks do not need Cypress's ~500 MB binary.
+      CYPRESS_INSTALL_BINARY: 0
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run typecheck
+      - name: App unit and HTTP tests (node:test)
+        run: npm run test:app
+
+  api:
+    name: API tests
+    needs: checks # no point starting Cypress if the code does not even compile
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+      # Installs packages (with the Cypress binary cache), builds and starts the app,
+      # waits for its health check, runs the specs and writes a job summary.
+      - uses: cypress-io/github-action@v7
+        with:
+          build: npm run build
+          start: npm start
+          wait-on: 'http://localhost:3000/api/health'
+          spec: cypress/e2e/api/**
+      - name: Upload report
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v7
+        with:
+          name: report-api
+          path: cypress/reports/e2e
+          retention-days: 14
+
+  ui:
+    name: UI tests (${{ matrix.browser }})
+    needs: checks
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false # one browser failing should not cancel the others
+      matrix:
+        browser: [chrome, firefox, edge] # all three come preinstalled on ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+      - uses: cypress-io/github-action@v7
+        with:
+          build: npm run build
+          start: npm start
+          wait-on: 'http://localhost:3000/api/health'
+          browser: ${{ matrix.browser }}
+          spec: cypress/e2e/ui/**
+      # Upload even when tests failed: that is exactly when the report and screenshots are needed.
+      - name: Upload report
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v7
+        with:
+          name: report-ui-${{ matrix.browser }}
+          path: cypress/reports/e2e
+          retention-days: 14
+
+  component:
+    name: Component tests
+    needs: checks
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+      - uses: cypress-io/github-action@v7
+        with:
+          component: true
+          browser: chrome
+      - name: Upload report
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v7
+        with:
+          name: report-component
+          path: cypress/reports/component
+          retention-days: 14

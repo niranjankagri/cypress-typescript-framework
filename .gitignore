@@ -1,0 +1,15 @@
+# Dependencies
+node_modules/
+
+# Built TaskBoard web app (npm run build)
+dist/
+
+# Cypress output: screenshots, videos, downloads and the HTML report
+cypress/screenshots/
+cypress/videos/
+cypress/downloads/
+cypress/reports/
+
+# IDE settings
+.idea/
+.vscode/

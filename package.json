@@ -14,7 +14,14 @@
     "test:app": "node --test \"app/server/*.test.ts\"",
     "lint": "eslint . && prettier --check .",
     "format": "prettier --write .",
-    "typecheck": "tsc --noEmit -p tsconfig.json && tsc --noEmit -p cypress/tsconfig.json"
+    "typecheck": "tsc --noEmit -p tsconfig.json && tsc --noEmit -p cypress/tsconfig.json",
+    "cy:open": "cypress open",
+    "cy:run": "cypress run",
+    "cy:api": "cypress run --spec \"cypress/e2e/api/**\"",
+    "cy:ui": "cypress run --spec \"cypress/e2e/ui/**\"",
+    "cy:component": "cypress run --component",
+    "cy:demo": "cypress run --spec \"cypress/e2e/demo/**\" --expose demo=true",
+    "test": "npm run build && start-server-and-test start http-get://localhost:3000/api/health cy:run"
   },
   "author": "Niranjan Kumar Agri",
   "license": "MIT",

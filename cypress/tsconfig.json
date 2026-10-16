@@ -1,0 +1,20 @@
+{
+  // Type checking for the tests (npm run typecheck). Cypress bundles the specs itself.
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "jsx": "react-jsx",
+    "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    // Component tests import the app's components, whose own imports name the .ts/.tsx file.
+    "allowImportingTsExtensions": true,
+    "isolatedModules": true,
+    "skipLibCheck": true,
+    "noEmit": true,
+    "types": ["cypress", "node"]
+  },
+  "include": ["**/*.ts", "**/*.tsx"]
+}

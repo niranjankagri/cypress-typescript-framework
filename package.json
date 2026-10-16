@@ -11,7 +11,7 @@
     "build": "vite build",
     "start": "node app/server/server.ts",
     "dev": "vite",
-    "test:app": "node --test app/server/",
+    "test:app": "node --test \"app/server/*.test.ts\"",
     "lint": "eslint . && prettier --check .",
     "format": "prettier --write .",
     "typecheck": "tsc --noEmit -p tsconfig.json && tsc --noEmit -p cypress/tsconfig.json"

@@ -1,0 +1,31 @@
+{
+  "tasks": [
+    {
+      "id": "stub-1",
+      "title": "Stubbed task with a very long title that still has to fit nicely on one row of the board",
+      "priority": "high",
+      "dueDate": "2031-12-24",
+      "done": false,
+      "createdAt": "2026-10-03T08:00:00.000Z",
+      "updatedAt": "2026-10-03T08:00:00.000Z"
+    },
+    {
+      "id": "stub-2",
+      "title": "Stubbed low-priority task",
+      "priority": "low",
+      "dueDate": null,
+      "done": false,
+      "createdAt": "2026-10-02T08:00:00.000Z",
+      "updatedAt": "2026-10-02T08:00:00.000Z"
+    },
+    {
+      "id": "stub-3",
+      "title": "Stubbed finished task",
+      "priority": "medium",
+      "dueDate": "2020-01-01",
+      "done": true,
+      "createdAt": "2026-10-01T08:00:00.000Z",
+      "updatedAt": "2026-10-01T08:00:00.000Z"
+    }
+  ]
+}

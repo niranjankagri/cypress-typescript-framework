@@ -10,6 +10,7 @@ export default defineConfig({
   reporterOptions: {
     reportDir: 'cypress/reports/e2e',
     reportPageTitle: 'TaskBoard Cypress report',
+    reportTitle: 'TaskBoard: E2E and API tests',
     charts: true,
     embeddedScreenshots: true,
     inlineAssets: true,
@@ -55,7 +56,11 @@ export default defineConfig({
     specPattern: 'cypress/component/**/*.cy.tsx',
     setupNodeEvents(on, config) {
       mochawesomePlugin(on);
-      config.reporterOptions = { ...config.reporterOptions, reportDir: 'cypress/reports/component' };
+      config.reporterOptions = {
+        ...config.reporterOptions,
+        reportDir: 'cypress/reports/component',
+        reportTitle: 'TaskBoard: component tests',
+      };
       return config;
     },
   },

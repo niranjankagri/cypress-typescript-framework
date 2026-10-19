@@ -4,11 +4,16 @@ import { getToken } from './api.ts';
 import { BoardPage } from './pages/BoardPage.tsx';
 import { LoginPage } from './pages/LoginPage.tsx';
 
+/** Client-side navigation: changes the URL and fires popstate, so App re-renders without a page load. */
 function navigate(path: string): void {
   window.history.pushState(null, '', path);
   window.dispatchEvent(new PopStateEvent('popstate'));
 }
 
+/**
+ * The router: /login shows the login screen, every other path the board. Without a token the board sends you
+ * to /login; with one, /login sends you to the board.
+ */
 export function App() {
   const [path, setPath] = useState(window.location.pathname);
 

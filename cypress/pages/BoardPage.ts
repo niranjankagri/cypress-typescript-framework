@@ -5,6 +5,7 @@ import type { Priority } from '../support/api';
 export type StatusFilter = 'all' | 'active' | 'done';
 
 export const boardPage = {
+  /** Opens the board (needs a login; see cy.loginAs). */
   visit() {
     cy.visit('/');
   },
@@ -30,6 +31,7 @@ export const boardPage = {
     cy.getBySel(`filter-${status}`).click();
   },
   filterButton: (status: StatusFilter) => cy.getBySel(`filter-${status}`),
+  /** Types into the search box; the board waits for the debounce before searching. */
   search(text: string) {
     fill('search', text);
   },
@@ -48,10 +50,12 @@ export const boardPage = {
   task: (title: string) =>
     cy.contains('[data-cy="task-title"]', new RegExp(`^${escapeRegExp(title)}$`)).parents('[data-cy="task"]'),
 
+  /** Clicks the done checkbox of the task with this title. */
   toggle(title: string) {
     this.task(title).find('[data-cy="task-done"]').click();
   },
 
+  /** Edits the title in place and saves it with Enter. */
   rename(title: string, newTitle: string) {
     this.task(title).find('[data-cy="edit-task"]').click();
     fill('edit-title', `${newTitle}{enter}`);
@@ -72,6 +76,7 @@ export function fill(selector: string, text: string, options: Partial<Cypress.Ty
   cy.getBySel(selector).type(text, options);
 }
 
+/** Escapes regex characters, so a title like "Fix (urgent)" matches itself exactly. */
 function escapeRegExp(text: string): string {
   return text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }

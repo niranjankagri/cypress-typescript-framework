@@ -15,6 +15,7 @@ before(async () => {
 
 after(() => server.close());
 
+/** Logs a demo user in through the real endpoint and returns the token. */
 async function login(username = 'alice'): Promise<string> {
   const res = await fetch(`${base}/api/login`, {
     method: 'POST',

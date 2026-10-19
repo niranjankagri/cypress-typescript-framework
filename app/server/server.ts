@@ -25,6 +25,7 @@ class HttpError extends Error {
   readonly status: number;
   readonly field: string | undefined;
 
+  /** field names the request field that caused the error, so the UI can point at it. */
   constructor(status: number, message: string, field?: string) {
     super(message);
     this.status = status;
@@ -39,6 +40,10 @@ export interface ServerOptions {
   log?: boolean;
 }
 
+/**
+ * Creates the HTTP server (not yet listening): /api/* goes to the API, every other path to the built React
+ * app. Known errors become JSON with their status; anything unexpected is logged and answered with a 500.
+ */
 export function createServer(store: Store = createStore(), options: ServerOptions = {}): Server {
   const { testHooks = true, log = false } = options;
 
@@ -61,6 +66,10 @@ export function createServer(store: Store = createStore(), options: ServerOption
     });
   });
 
+  /**
+   * All API routes: health, test reset and login without a token; everything else needs "Authorization:
+   * Bearer <token>". Another user's task answers 404, the same as a task that does not exist.
+   */
   async function handleApi(req: IncomingMessage, res: ServerResponse, url: URL): Promise<void> {
     const route = `${req.method} ${url.pathname}`;
 
@@ -149,6 +158,7 @@ async function serveStatic(res: ServerResponse, url: URL): Promise<void> {
   }
 }
 
+/** Reads the request body as JSON: more than MAX_BODY_BYTES is a 413, invalid JSON a 400. */
 async function readJson(req: IncomingMessage): Promise<unknown> {
   let size = 0;
   const chunks: Buffer[] = [];
@@ -164,11 +174,13 @@ async function readJson(req: IncomingMessage): Promise<unknown> {
   }
 }
 
+/** Writes a JSON response. */
 function sendJson(res: ServerResponse, status: number, body: unknown): void {
   res.writeHead(status, { 'Content-Type': 'application/json; charset=utf-8' });
   res.end(JSON.stringify(body));
 }
 
+/** Writes a response without a body (204). */
 function sendEmpty(res: ServerResponse, status: number): void {
   res.writeHead(status);
   res.end();

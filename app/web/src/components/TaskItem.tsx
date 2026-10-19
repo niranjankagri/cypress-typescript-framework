@@ -12,11 +12,13 @@ interface Props {
   onDelete: () => void | Promise<void>;
 }
 
+/** One task row; Overdue is only shown for an open task whose due date has passed. */
 export function TaskItem({ task, onToggle, onRename, onDelete }: Props) {
   const [editing, setEditing] = useState(false);
   const [draft, setDraft] = useState(task.title);
   const overdue = isOverdue(task.dueDate, task.done);
 
+  /** Leaves edit mode and renames only when the trimmed title is not empty and really changed. */
   function save(event: FormEvent) {
     event.preventDefault();
     setEditing(false);

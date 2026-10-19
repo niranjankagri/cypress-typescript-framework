@@ -10,6 +10,10 @@ import type { NewTask, StatusFilter, Task, User } from '../types.ts';
 /** Search waits until the user stops typing for this long, so not every key press calls the API. */
 export const SEARCH_DEBOUNCE_MS = 300;
 
+/**
+ * The board: loads the user and the tasks, debounces the search, and shows loading, error and empty states. A
+ * 401 anywhere logs the user out.
+ */
 export function BoardPage({ onLoggedOut }: { onLoggedOut: () => void }) {
   const [user, setUser] = useState<User | null>(null);
   const [tasks, setTasks] = useState<Task[]>([]);
@@ -64,6 +68,7 @@ export function BoardPage({ onLoggedOut }: { onLoggedOut: () => void }) {
   // Stable function: a new one on every render would restart the toast's timer.
   const hideToast = useCallback(() => setToast(''), []);
 
+  /** Runs a task action, then shows the toast and reloads the list; an error is shown instead. */
   async function run(action: () => Promise<unknown>, message: string) {
     try {
       await action();
@@ -74,6 +79,7 @@ export function BoardPage({ onLoggedOut }: { onLoggedOut: () => void }) {
     }
   }
 
+  /** Logs out (a failed server call does not stop it) and goes to /login. */
   async function logout() {
     await api.logout().catch(() => undefined);
     onLoggedOut();

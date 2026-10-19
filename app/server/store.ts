@@ -36,6 +36,7 @@ export type PublicTask = Omit<Task, 'ownerId'>;
 export class ValidationError extends Error {
   readonly field: string | undefined;
 
+  /** field names the broken input field, for the API's error answer. */
   constructor(message: string, field?: string) {
     super(message);
     this.name = 'ValidationError';
@@ -105,10 +106,12 @@ export function isCalendarDate(value: unknown): value is string {
   return !Number.isNaN(date.getTime()) && date.toISOString().startsWith(value);
 }
 
+/** The user without the password, as the API returns it. */
 export function toPublicUser({ password: _password, ...user }: User): PublicUser {
   return user;
 }
 
+/** The task without its owner id, as the API returns it. */
 export function toPublicTask({ ownerId: _ownerId, ...task }: Task): PublicTask {
   return task;
 }
@@ -128,6 +131,7 @@ export function createStore() {
     tasks = seedTasks.map((task) => ({ ...task }));
   }
 
+  /** The task only if it belongs to this user. */
   function ownTask(userId: string, taskId: string): Task | undefined {
     // Another user's task is reported as missing, not forbidden: its existence is not revealed.
     return tasks.find((task) => task.id === taskId && task.ownerId === userId);
@@ -147,10 +151,12 @@ export function createStore() {
       return { token, user: toPublicUser(user) };
     },
 
+    /** Forgets the token; later calls with it get 401. */
     logout(token: string): void {
       tokens.delete(token);
     },
 
+    /** The user behind a token, or undefined for an unknown token. */
     userForToken(token: string): User | undefined {
       const userId = tokens.get(token);
       return users.find((user) => user.id === userId);
@@ -166,10 +172,12 @@ export function createStore() {
         .sort((a, b) => b.createdAt.localeCompare(a.createdAt));
     },
 
+    /** One of the user's tasks, or undefined. */
     getTask(userId: string, taskId: string): Task | undefined {
       return ownTask(userId, taskId);
     },
 
+    /** Validates the body and stores a new open task with priority medium and no due date unless given. */
     createTask(userId: string, input: unknown): Task {
       const values = validateTaskInput(input, false);
       const now = new Date().toISOString();

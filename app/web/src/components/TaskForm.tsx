@@ -7,6 +7,7 @@ import type { NewTask, Priority } from '../types.ts';
 export const TITLE_MIN = 3;
 export const TITLE_MAX = 80;
 
+/** The new-task form; onCreate saves the task and throws when the API refuses it. */
 export function TaskForm({ onCreate }: { onCreate: (task: NewTask) => Promise<void> }) {
   const [title, setTitle] = useState('');
   const [priority, setPriority] = useState<Priority>('medium');
@@ -14,6 +15,10 @@ export function TaskForm({ onCreate }: { onCreate: (task: NewTask) => Promise<vo
   const [error, setError] = useState('');
   const [busy, setBusy] = useState(false);
 
+  /**
+   * Checks the title length first (no API call for an obvious mistake), then saves; the button is disabled
+   * while saving.
+   */
   async function submit(event: FormEvent) {
     event.preventDefault();
     const trimmed = title.trim();

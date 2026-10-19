@@ -19,6 +19,7 @@ export interface ApiError {
   field?: string;
 }
 
+/** One API request with the token when given; failOnStatusCode: false hands every status to the test. */
 function call<T>(method: string, url: string, token?: string, body?: unknown): Response<T> {
   return cy.request<T>({
     method,

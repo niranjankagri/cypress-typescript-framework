@@ -3,12 +3,17 @@ import { useState } from 'react';
 import type { FormEvent } from 'react';
 import { api } from '../api.ts';
 
+/** The login screen; onLoggedIn runs after a successful login. */
 export function LoginPage({ onLoggedIn }: { onLoggedIn: () => void }) {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [busy, setBusy] = useState(false);
 
+  /**
+   * Logs in, or shows the server's message (for example "Wrong username or password"); the button is disabled
+   * meanwhile.
+   */
   async function submit(event: FormEvent) {
     event.preventDefault();
     setError('');

@@ -2,6 +2,7 @@
 import { fill } from './BoardPage';
 
 export const loginPage = {
+  /** Opens the login screen. */
   visit() {
     cy.visit('/login');
   },

@@ -13,6 +13,10 @@ const task: Task = {
   updatedAt: '2026-10-01T08:00:00.000Z',
 };
 
+/**
+ * Mounts one row of the sample task (with overrides) inside a list, with stubbed callbacks named @toggle,
+ * @rename and @delete.
+ */
 function mountItem(overrides: Partial<Task> = {}) {
   const props = {
     onToggle: cy.stub().as('toggle'),

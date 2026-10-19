@@ -14,6 +14,10 @@ interface Props {
   onSearchChange: (search: string) => void;
 }
 
+/**
+ * The three status buttons (aria-pressed marks the active one) and the search box; changes go up to the
+ * board.
+ */
 export function FilterBar({ status, search, onStatusChange, onSearchChange }: Props) {
   return (
     <div className="filters" data-cy="filter-bar">

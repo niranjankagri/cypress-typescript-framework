@@ -9,6 +9,7 @@ export class ApiError extends Error {
   readonly status: number;
   readonly field: string | undefined;
 
+  /** status is the HTTP status; field the input the server refused. */
   constructor(status: number, message: string, field?: string) {
     super(message);
     this.status = status;
@@ -16,10 +17,15 @@ export class ApiError extends Error {
   }
 }
 
+/** The stored login token, or null when logged out. */
 export function getToken(): string | null {
   return localStorage.getItem(TOKEN_KEY);
 }
 
+/**
+ * One API call with the token and JSON body; 204 gives undefined, any other non-2xx answer throws an ApiError
+ * with the server's message. The signal lets a newer request cancel this one.
+ */
 async function request<T>(method: string, path: string, body?: unknown, signal?: AbortSignal): Promise<T> {
   const token = getToken();
   const res = await fetch(path, {
@@ -38,6 +44,7 @@ async function request<T>(method: string, path: string, body?: unknown, signal?:
 }
 
 export const api = {
+  /** Logs in, stores the token and returns the user. */
   async login(username: string, password: string): Promise<User> {
     const session = await request<{ token: string; user: User }>('POST', '/api/login', {
       username,
@@ -47,6 +54,7 @@ export const api = {
     return session.user;
   },
 
+  /** Logs out on the server and always removes the local token. */
   async logout(): Promise<void> {
     // The local token goes even if the server call fails: the user wanted out.
     await request<void>('POST', '/api/logout').finally(() => localStorage.removeItem(TOKEN_KEY));
@@ -54,6 +62,9 @@ export const api = {
 
   me: () => request<User>('GET', '/api/me'),
 
+  /**
+   * The user's tasks for the status filter and search text (trimmed; an empty search sends no q parameter).
+   */
   async listTasks(status: StatusFilter, query: string, signal?: AbortSignal): Promise<Task[]> {
     const params = new URLSearchParams({ status });
     if (query.trim()) params.set('q', query.trim());

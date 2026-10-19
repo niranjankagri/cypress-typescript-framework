@@ -41,6 +41,9 @@ export default defineConfig({
   e2e: {
     baseUrl: 'http://localhost:3000',
     specPattern: 'cypress/e2e/**/*.cy.ts',
+    /**
+     * E2E: registers the report plugin and leaves the demo specs out unless the run sets --expose demo=true.
+     */
     setupNodeEvents(on, config) {
       mochawesomePlugin(on);
       // The demo specs fail and skip on purpose (to show the report); left out of normal runs.
@@ -54,6 +57,7 @@ export default defineConfig({
   component: {
     devServer: { framework: 'react', bundler: 'vite' },
     specPattern: 'cypress/component/**/*.cy.tsx',
+    /** Component tests: the same report plugin, writing to its own folder with its own title. */
     setupNodeEvents(on, config) {
       mochawesomePlugin(on);
       config.reporterOptions = {

@@ -165,7 +165,10 @@ Component tests (17):
    binary needed).
 2. In parallel after that: **API tests**, **UI tests** in Chrome, Firefox and Edge, **component tests**.
    `cypress-io/github-action` builds and starts the app, waits for `/api/health` and writes a job summary.
-3. Each job uploads its HTML report, also when tests fail.
+3. Each job uploads its HTML report, also when tests fail. [Automation Coverage & Quality Intelligence](https://github.com/niranjankagri/automation-coverage-quality-intelligence)
+   reads these reports for its cross-repository dashboard.
+
+`main` is protected by a ruleset: every change goes through a pull request, and the CI jobs above must pass before it is merged.
 
 ## Design notes
 
@@ -190,4 +193,4 @@ More: [docs/framework-design.md](docs/framework-design.md).
 
 ## License
 
-MIT
+[MIT](LICENSE)

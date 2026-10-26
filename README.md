@@ -168,6 +168,8 @@ Component tests (17):
 3. Each job uploads its HTML report, also when tests fail. [Automation Coverage & Quality Intelligence](https://github.com/niranjankagri/automation-coverage-quality-intelligence)
    reads these reports for its cross-repository dashboard.
 
+Dependabot proposes dependency and GitHub Actions updates once a month (minor and patch updates grouped, major versions as separate pull requests).
+
 `main` is protected by a ruleset: every change goes through a pull request, and the CI jobs above must pass before it is merged.
 
 ## Design notes

@@ -13,7 +13,7 @@ describe('UI: tasks', () => {
       boardPage.visit();
     });
 
-    it('lists the tasks newest first with the count', () => {
+    it('[TC-112] lists the tasks newest first with the count', () => {
       boardPage.taskCount().should('have.text', `${users.alice.taskCount} tasks`);
       boardPage
         .titles()
@@ -21,7 +21,7 @@ describe('UI: tasks', () => {
         .should('deep.equal', [seeded.future, seeded.noDueDate, seeded.overdue, seeded.done]);
     });
 
-    it('shows priority and due date, and strikes through a done task', () => {
+    it('[TC-113] shows priority and due date, and strikes through a done task', () => {
       boardPage.task(seeded.future).within(() => {
         cy.getBySel('task-priority').should('have.text', 'high');
         cy.getBySel('task-due').should('have.text', '15 Jan 2030');
@@ -34,7 +34,7 @@ describe('UI: tasks', () => {
         .should('be.checked');
     });
 
-    it('marks a task as done and opens it again', () => {
+    it('[TC-114] marks a task as done and opens it again', () => {
       boardPage.toggle(seeded.noDueDate);
       boardPage.toast().should('have.text', 'Task done');
       boardPage.task(seeded.noDueDate).should('have.class', 'done');
@@ -44,14 +44,14 @@ describe('UI: tasks', () => {
       boardPage.task(seeded.noDueDate).should('not.have.class', 'done');
     });
 
-    it('renames a task in place with Enter', () => {
+    it('[TC-115] renames a task in place with Enter', () => {
       boardPage.rename(seeded.noDueDate, 'Review and merge pull requests');
       boardPage.toast().should('have.text', 'Task updated');
       boardPage.task('Review and merge pull requests').should('exist');
       cy.contains(seeded.noDueDate).should('not.exist');
     });
 
-    it('keeps the old title when editing is cancelled with Escape', () => {
+    it('[TC-116] keeps the old title when editing is cancelled with Escape', () => {
       cy.intercept('PATCH', '/api/tasks/*').as('update');
       boardPage.task(seeded.noDueDate).find('[data-cy="edit-task"]').click();
       fill('edit-title', 'Something else{esc}');
@@ -60,7 +60,7 @@ describe('UI: tasks', () => {
       cy.get('@update.all').should('have.length', 0);
     });
 
-    it('deletes a task after the confirmation', () => {
+    it('[TC-117] deletes a task after the confirmation', () => {
       cy.on('window:confirm', (text) => {
         expect(text).to.equal(`Delete "${seeded.noDueDate}"?`);
         return true;
@@ -71,7 +71,7 @@ describe('UI: tasks', () => {
       cy.contains(seeded.noDueDate).should('not.exist');
     });
 
-    it('keeps the task when the confirmation is cancelled', () => {
+    it('[TC-118] keeps the task when the confirmation is cancelled', () => {
       // Returning false from the window:confirm handler clicks "Cancel".
       cy.on('window:confirm', () => false);
       boardPage.delete(seeded.noDueDate);
@@ -86,12 +86,12 @@ describe('UI: tasks', () => {
       boardPage.visit();
     });
 
-    it('shows the empty state', () => {
+    it('[TC-119] shows the empty state', () => {
       boardPage.emptyState().should('have.text', 'No tasks yet. Add your first one above.');
       boardPage.tasks().should('not.exist');
     });
 
-    it('adds a task with priority and due date, then clears the form', () => {
+    it('[TC-120] adds a task with priority and due date, then clears the form', () => {
       const task = buildTask();
       cy.intercept('POST', '/api/tasks').as('create');
 
@@ -110,7 +110,7 @@ describe('UI: tasks', () => {
       boardPage.taskCount().should('have.text', '1 task');
     });
 
-    it('checks the title length before calling the API', () => {
+    it('[TC-121] checks the title length before calling the API', () => {
       cy.intercept('POST', '/api/tasks').as('create');
       boardPage.addTask('ab');
       boardPage.formError().should('have.text', 'Title must be 3-80 characters');
@@ -121,7 +121,7 @@ describe('UI: tasks', () => {
       boardPage.emptyState().should('be.visible');
     });
 
-    it('survives a page reload (data comes from the server, login from localStorage)', () => {
+    it('[TC-122] survives a page reload (data comes from the server, login from localStorage)', () => {
       const task = buildTask();
       boardPage.addTask(task.title);
       boardPage.task(task.title).should('exist');

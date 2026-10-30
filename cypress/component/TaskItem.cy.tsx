@@ -31,20 +31,20 @@ function mountItem(overrides: Partial<Task> = {}) {
 }
 
 describe('<TaskItem />', () => {
-  it('shows title, priority and the formatted due date', () => {
+  it('[TC-310] shows title, priority and the formatted due date', () => {
     mountItem();
     cy.getBySel('task-title').should('have.text', task.title);
     cy.getBySel('task-priority').should('have.text', 'high').and('have.class', 'high');
     cy.getBySel('task-due').should('have.text', '20 Oct 2026');
   });
 
-  it('shows "Overdue" only for an open task with a past due date', () => {
+  it('[TC-311] shows "Overdue" only for an open task with a past due date', () => {
     cy.clock(new Date(2026, 9, 21, 12).getTime(), ['Date']);
     mountItem();
     cy.getBySel('task-overdue').should('have.text', 'Overdue');
   });
 
-  it('hides "Overdue" for a done task and strikes it through', () => {
+  it('[TC-312] hides "Overdue" for a done task and strikes it through', () => {
     cy.clock(new Date(2026, 9, 21, 12).getTime(), ['Date']);
     mountItem({ done: true });
     cy.getBySel('task-overdue').should('not.exist');
@@ -52,13 +52,13 @@ describe('<TaskItem />', () => {
     cy.getBySel('task-done').should('be.checked');
   });
 
-  it('calls onToggle with the new state', () => {
+  it('[TC-313] calls onToggle with the new state', () => {
     mountItem();
     cy.getBySel('task-done').click();
     cy.get('@toggle').should('have.been.calledOnceWith', true);
   });
 
-  it('calls onRename with the trimmed new title, and not for an unchanged one', () => {
+  it('[TC-314] calls onRename with the trimmed new title, and not for an unchanged one', () => {
     mountItem();
     cy.getBySel('edit-task').click();
     cy.getBySel('edit-title').should('be.focused').and('have.value', task.title);
@@ -71,7 +71,7 @@ describe('<TaskItem />', () => {
     cy.get('@rename').should('have.been.calledOnceWith', 'New title');
   });
 
-  it('calls onDelete only after the user confirms', () => {
+  it('[TC-315] calls onDelete only after the user confirms', () => {
     mountItem();
     // One handler for both clicks: "Cancel" the first time, "OK" the second. (With two handlers,
     // any one returning false cancels the dialog.)

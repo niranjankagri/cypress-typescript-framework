@@ -8,7 +8,7 @@ describe('API: tasks', () => {
     cy.resetData();
   });
 
-  it("lists only the user's own tasks, newest first, matching the contract", () => {
+  it("[TC-211] lists only the user's own tasks, newest first, matching the contract", () => {
     cy.apiToken('alice').then((token) => {
       api.listTasks(token).then((response) => {
         expect(response.status).to.equal(200);
@@ -20,7 +20,7 @@ describe('API: tasks', () => {
     });
   });
 
-  it('filters by status and by a case-insensitive search', () => {
+  it('[TC-212] filters by status and by a case-insensitive search', () => {
     cy.apiToken('alice').then((token) => {
       api.listTasks(token, { status: 'done' }).its('body.tasks').should('have.length', 1);
       api.listTasks(token, { status: 'active' }).its('body.tasks').should('have.length', 3);
@@ -30,7 +30,7 @@ describe('API: tasks', () => {
     });
   });
 
-  it('answers 400 for an unknown status filter', () => {
+  it('[TC-213] answers 400 for an unknown status filter', () => {
     cy.apiToken('alice').then((token) => {
       api.listTasks(token, { status: 'archived' }).then((response) => {
         expect(response.status).to.equal(400);
@@ -39,7 +39,7 @@ describe('API: tasks', () => {
     });
   });
 
-  it('creates a task with defaults and returns it with 201', () => {
+  it('[TC-214] creates a task with defaults and returns it with 201', () => {
     const task = buildTask();
     cy.apiToken('carol').then((token) => {
       api.createTask(token, { title: task.title }).then((response) => {
@@ -57,7 +57,7 @@ describe('API: tasks', () => {
     });
   });
 
-  it('trims the title before saving', () => {
+  it('[TC-215] trims the title before saving', () => {
     cy.apiToken('carol').then((token) => {
       api
         .createTask(token, { title: '   Padded title   ' })
@@ -66,7 +66,7 @@ describe('API: tasks', () => {
     });
   });
 
-  it('updates a task partially and changes updatedAt', () => {
+  it('[TC-216] updates a task partially and changes updatedAt', () => {
     cy.createTask('carol', buildTask({ priority: 'low' })).then((created) => {
       cy.apiToken('carol').then((token) => {
         api.updateTask(token, created.id, { done: true, priority: 'high' }).then((response) => {
@@ -78,7 +78,7 @@ describe('API: tasks', () => {
     });
   });
 
-  it('deletes a task, after which it is gone', () => {
+  it('[TC-217] deletes a task, after which it is gone', () => {
     cy.createTask('carol', buildTask()).then((created) => {
       cy.apiToken('carol').then((token) => {
         api.deleteTask(token, created.id).its('status').should('equal', 204);
@@ -88,7 +88,7 @@ describe('API: tasks', () => {
     });
   });
 
-  it("answers 404 for another user's task on read, update and delete", () => {
+  it("[TC-218] answers 404 for another user's task on read, update and delete", () => {
     // Alice must not see, change or delete Bob's task; 404 (not 403) hides that it exists.
     cy.apiToken('alice').then((token) => {
       api.getTask(token, seeded.bobsTaskId).its('status').should('equal', 404);
@@ -101,7 +101,7 @@ describe('API: tasks', () => {
     });
   });
 
-  it('puts the seed data back on reset', () => {
+  it('[TC-219] puts the seed data back on reset', () => {
     cy.apiToken('alice').then((token) => {
       api
         .listTasks(token)

@@ -9,7 +9,7 @@ describe('UI: network conditions (cy.intercept)', () => {
     cy.loginAs('alice');
   });
 
-  it('shows the loading state while the list is slow', () => {
+  it('[TC-127] shows the loading state while the list is slow', () => {
     cy.intercept('GET', '/api/tasks*', (req) => {
       req.on('response', (res) => {
         res.setDelay(1500);
@@ -23,7 +23,7 @@ describe('UI: network conditions (cy.intercept)', () => {
     boardPage.tasks().should('have.length', users.alice.taskCount);
   });
 
-  it('shows an error banner on a server error and recovers with Retry', () => {
+  it('[TC-128] shows an error banner on a server error and recovers with Retry', () => {
     // Only the first request fails (times: 1); Retry reaches the real server.
     cy.intercept(
       { method: 'GET', url: '/api/tasks*', times: 1 },
@@ -38,7 +38,7 @@ describe('UI: network conditions (cy.intercept)', () => {
     boardPage.tasks().should('have.length', users.alice.taskCount);
   });
 
-  it('shows an error banner when the network fails', () => {
+  it('[TC-129] shows an error banner when the network fails', () => {
     cy.intercept('GET', '/api/tasks*', { forceNetworkError: true }).as('offline');
     boardPage.visit();
     // The browser's own message differs (Chrome: "Failed to fetch", Firefox: "NetworkError ...").
@@ -46,7 +46,7 @@ describe('UI: network conditions (cy.intercept)', () => {
     boardPage.tasks().should('not.exist');
   });
 
-  it('renders whatever the API returns (list stubbed from a fixture)', () => {
+  it('[TC-130] renders whatever the API returns (list stubbed from a fixture)', () => {
     cy.intercept('GET', '/api/tasks*', { fixture: 'tasks.json' }).as('list');
     boardPage.visit();
     cy.wait('@list');
@@ -57,7 +57,7 @@ describe('UI: network conditions (cy.intercept)', () => {
     boardPage.task('Stubbed low-priority task').find('[data-cy="task-priority"]').should('have.text', 'low');
   });
 
-  it("shows the server's validation message in the form and keeps the input", () => {
+  it("[TC-131] shows the server's validation message in the form and keeps the input", () => {
     const task = buildTask();
     cy.intercept('POST', '/api/tasks', {
       statusCode: 400,
@@ -71,13 +71,13 @@ describe('UI: network conditions (cy.intercept)', () => {
     boardPage.titleInput().should('have.value', task.title);
   });
 
-  it('sends the user to the login page when the API says the login expired', () => {
+  it('[TC-132] sends the user to the login page when the API says the login expired', () => {
     cy.intercept('GET', '/api/tasks*', { statusCode: 401, body: { error: 'Not logged in' } });
     boardPage.visit();
     cy.location('pathname').should('equal', '/login');
   });
 
-  it('sends the token as a Bearer header on every API call', () => {
+  it('[TC-133] sends the token as a Bearer header on every API call', () => {
     cy.intercept('GET', '/api/me').as('me');
     cy.intercept('GET', '/api/tasks*').as('list');
     boardPage.visit();

@@ -2,12 +2,12 @@
 import { Toast, TOAST_MS } from '../../app/web/src/components/Toast.tsx';
 
 describe('<Toast />', () => {
-  it('renders nothing without a message', () => {
+  it('[TC-316] renders nothing without a message', () => {
     cy.mount(<Toast message="" onDone={cy.stub()} />);
     cy.getBySel('toast').should('not.exist');
   });
 
-  it('shows the message as a status and calls onDone after exactly 3 s', () => {
+  it('[TC-317] shows the message as a status and calls onDone after exactly 3 s', () => {
     cy.clock();
     cy.mount(<Toast message="Task added" onDone={cy.stub().as('done')} />);
     cy.getBySel('toast').should('have.text', 'Task added').and('have.attr', 'role', 'status');

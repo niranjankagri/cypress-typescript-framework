@@ -2,7 +2,7 @@
 import { TaskForm } from '../../app/web/src/components/TaskForm.tsx';
 
 describe('<TaskForm />', () => {
-  it('sends title, priority and due date, then clears the form', () => {
+  it('[TC-304] sends title, priority and due date, then clears the form', () => {
     const onCreate = cy.stub().as('create').resolves();
     cy.mount(<TaskForm onCreate={onCreate} />);
 
@@ -20,7 +20,7 @@ describe('<TaskForm />', () => {
     cy.getBySel('new-task-priority').should('have.value', 'medium');
   });
 
-  it('sends dueDate null when no date is chosen', () => {
+  it('[TC-305] sends dueDate null when no date is chosen', () => {
     const onCreate = cy.stub().as('create').resolves();
     cy.mount(<TaskForm onCreate={onCreate} />);
     cy.getBySel('new-task-title').type('No date');
@@ -33,8 +33,11 @@ describe('<TaskForm />', () => {
   });
 
   // Boundary values of the title check: 2 and 81 characters are refused before any call.
-  ['ab', 'x'.repeat(81)].forEach((title) => {
-    it(`refuses a ${title.length}-character title without calling onCreate`, () => {
+  [
+    { id: 'TC-306', title: 'ab' },
+    { id: 'TC-307', title: 'x'.repeat(81) },
+  ].forEach(({ id, title }) => {
+    it(`[${id}] refuses a ${title.length}-character title without calling onCreate`, () => {
       const onCreate = cy.stub().as('create').resolves();
       cy.mount(<TaskForm onCreate={onCreate} />);
       cy.getBySel('new-task-title').type(title, { delay: 0 });
@@ -44,7 +47,7 @@ describe('<TaskForm />', () => {
     });
   });
 
-  it('disables the button while saving', () => {
+  it('[TC-308] disables the button while saving', () => {
     // A promise the test resolves itself: the form stays "busy" until then.
     let finish: () => void = () => undefined;
     const onCreate = cy.stub().returns(new Promise<void>((resolve) => (finish = resolve)));
@@ -56,7 +59,7 @@ describe('<TaskForm />', () => {
     cy.getBySel('add-task').should('be.enabled').and('have.text', 'Add task');
   });
 
-  it('shows the error from onCreate and keeps the input', () => {
+  it('[TC-309] shows the error from onCreate and keeps the input', () => {
     const onCreate = cy.stub().rejects(new Error('A task with this title already exists'));
     cy.mount(<TaskForm onCreate={onCreate} />);
     cy.getBySel('new-task-title').type('Duplicate');

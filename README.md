@@ -99,6 +99,21 @@ CI. No shared or hosted environment means no outages, no test data shared betwee
 that breaks these tests; one clone and one command run everything. It is also built for this framework: a reset endpoint
 gives every test clean data.
 
+## Test cases
+
+Every test starts with its case ID, e.g. `[TC-117] deletes a task after the confirmation`, and every
+case is written out for a manual run (preconditions, test data, steps, expected results) in
+**[docs/manual-test-cases.md](docs/manual-test-cases.md)**:
+
+| IDs              | Area                                                |
+| ---------------- | --------------------------------------------------- |
+| TC-101 to TC-133 | UI: filters, login, tasks, time, network conditions |
+| TC-201 to TC-231 | API: authentication, tasks, validation              |
+| TC-301 to TC-317 | Components: filter bar, task form, task row, toast  |
+
+Run one case: `npx cypress run --spec cypress/e2e/ui/tasks.cy.ts` and look for its ID in the report,
+or filter in the Cypress app's search box (`cy:open`).
+
 ## How a test runs
 
 1. `beforeEach`: `cy.resetData()` puts the seed data back, so every test starts from the same state.

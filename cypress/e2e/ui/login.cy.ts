@@ -8,7 +8,7 @@ describe('UI: login', () => {
     cy.resetData();
   });
 
-  it('logs in through the form and shows the board with the user name', () => {
+  it('[TC-105] logs in through the form and shows the board with the user name', () => {
     loginPage.visit();
     cy.env<{ password: string }>(['password']).then(({ password }) => {
       loginPage.login('alice', password);
@@ -18,14 +18,14 @@ describe('UI: login', () => {
     boardPage.tasks().should('have.length', users.alice.taskCount);
   });
 
-  it('shows the server message for a wrong password and stays on the login page', () => {
+  it('[TC-106] shows the server message for a wrong password and stays on the login page', () => {
     loginPage.visit();
     loginPage.login('alice', 'wrong-password');
     loginPage.error().should('have.text', 'Wrong username or password');
     cy.location('pathname').should('equal', '/login');
   });
 
-  it('disables the button while the login request is running', () => {
+  it('[TC-107] disables the button while the login request is running', () => {
     // Slow the real request down by 1 s, so the "busy" state can be seen.
     cy.intercept('POST', '/api/login', (req) => {
       req.on('response', (res) => {
@@ -39,13 +39,13 @@ describe('UI: login', () => {
     loginPage.submitButton().should('be.enabled').and('have.text', 'Log in');
   });
 
-  it('sends a visitor without a login to the login page', () => {
+  it('[TC-108] sends a visitor without a login to the login page', () => {
     boardPage.visit();
     cy.location('pathname').should('equal', '/login');
     loginPage.username().should('be.visible');
   });
 
-  it('opens the board directly with a cached session (no login form)', () => {
+  it('[TC-109] opens the board directly with a cached session (no login form)', () => {
     // cy.session logs in through the API once and restores the token for later tests and specs.
     cy.loginAs('bob');
     boardPage.visit();
@@ -53,7 +53,7 @@ describe('UI: login', () => {
     cy.location('pathname').should('equal', '/');
   });
 
-  it('logs out, removes the token and keeps the board closed', () => {
+  it('[TC-110] logs out, removes the token and keeps the board closed', () => {
     cy.loginAs('bob');
     boardPage.visit();
     boardPage.userName().should('have.text', users.bob.name);
@@ -66,7 +66,7 @@ describe('UI: login', () => {
     cy.location('pathname').should('equal', '/login');
   });
 
-  it('goes back to the login page when the stored token is no longer valid', () => {
+  it('[TC-111] goes back to the login page when the stored token is no longer valid', () => {
     // A token the server does not know, as after a server-side logout or expiry.
     cy.visit('/', {
       onBeforeLoad(win) {

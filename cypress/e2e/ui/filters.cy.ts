@@ -8,7 +8,7 @@ describe('UI: filters and search', () => {
     cy.loginAs('alice');
   });
 
-  it('shows active, done and all tasks, and marks the chosen filter', () => {
+  it('[TC-101] shows active, done and all tasks, and marks the chosen filter', () => {
     boardPage.visit();
 
     boardPage.filter('active');
@@ -24,7 +24,7 @@ describe('UI: filters and search', () => {
     boardPage.tasks().should('have.length', 4);
   });
 
-  it('sends the filter to the API as a query parameter', () => {
+  it('[TC-102] sends the filter to the API as a query parameter', () => {
     cy.intercept('GET', '/api/tasks*').as('list');
     boardPage.visit();
     cy.wait('@list').its('request.query').should('deep.equal', { status: 'all' });
@@ -32,7 +32,7 @@ describe('UI: filters and search', () => {
     cy.wait('@list').its('request.query').should('deep.equal', { status: 'done' });
   });
 
-  it('searches only after typing stops for 300 ms', () => {
+  it('[TC-103] searches only after typing stops for 300 ms', () => {
     // Freeze the timers before the page loads; Date keeps today's date.
     cy.clock(Date.now(), ['setTimeout', 'clearTimeout']);
     cy.intercept('GET', '/api/tasks*').as('list');
@@ -49,7 +49,7 @@ describe('UI: filters and search', () => {
     boardPage.titles().should('have.length', 1).and('have.text', seeded.noDueDate);
   });
 
-  it('combines search and status filter, and says when nothing matches', () => {
+  it('[TC-104] combines search and status filter, and says when nothing matches', () => {
     boardPage.visit();
     boardPage.search('test');
     boardPage.tasks().should('have.length', 2);

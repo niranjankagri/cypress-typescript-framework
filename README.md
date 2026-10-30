@@ -155,7 +155,7 @@ npm run dev              # app with hot reload on :5173 (API still on :3000 via 
 
 Each run writes one HTML report: `cypress/reports/e2e/index.html` or `cypress/reports/component/index.html`.
 
-All API and UI tests passed (64 tests, 8 specs):
+All UI tests passed in Chrome, each named with its case ID (CI run of 30 Oct 2026, 33 tests, 5 specs):
 
 ![Report: all passed](docs/images/report-all-passed.png)
 
